@@ -32,14 +32,14 @@ Check db for created data::
 
 Run server::
 
-    $ python forum/main.py -c config/user_config.toml
+    $ python main.py -c config/user_config.toml
 
 Testing
 =======
 
 Run tests::
 
-    $ pytest -vv .
+    $ pytest .
 
 
 Description
