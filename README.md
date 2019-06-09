@@ -12,7 +12,7 @@ Create virtual environment::
 
 Activate virtual environment::
 
-    $ source ./env/bin/activate
+    $ source .env/bin/activate
 
 Install requirements::
 
