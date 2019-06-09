@@ -1,0 +1,203 @@
+swagger: "2.0"
+info:
+  title: Swagger REST API for ShhForum
+  version: "0.1.0"
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /
+
+paths:
+  /topics:
+    get:
+      tags:
+        - Topics
+      summary: Get the list of topics
+      responses:
+        200:
+          description: JSON array of topics
+
+    post:
+      tags:
+        - Topics
+      summary: Create a new topic
+
+      parameters:
+        - name: topic
+          in: body
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Topic name
+                required: true
+
+      responses:
+        201:
+          description: Successfully created topic
+
+  /topics/{id}:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: Topic ID
+
+    get:
+      tags:
+        - Topics
+      summary: Get topic by id
+      responses:
+        200:
+          description: JSON object of topic
+
+    put:
+      tags:
+        - Topics
+      summary: Update topic by id
+
+      parameters:
+        - name: topic
+          in: body
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Topic name
+                required: true
+
+      responses:
+        200:
+          description: Successfully updated topic
+
+    delete:
+      tags:
+        - Topics
+      summary: Delete topic by id
+
+      responses:
+        200:
+          description: Successfully deleted topic
+
+  /topics/{id}/threads:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: Topic ID
+
+    get:
+      tags:
+        - Threads
+      summary: Get threads by topic id
+      responses:
+        200:
+          description: JSON object of topic threads
+
+    post:
+      tags:
+        - Threads
+      summary: Create a new thread
+
+      parameters:
+        - name: thread
+          in: body
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                description: Thread title
+                required: true
+              content:
+                type: string
+                description: Content of starting message in thread
+                required: true
+
+      responses:
+        201:
+          description: Successfully created thread
+
+  /threads/{id}/messages:
+    parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: Thread ID
+
+    get:
+      tags:
+        - Messages
+      summary: Get messages by thread id
+      responses:
+        200:
+          description: JSON object of thread messages
+
+    post:
+      tags:
+        - Messages
+      summary: Create a new message
+
+      parameters:
+        - name: message
+          in: body
+          schema:
+            type: object
+            properties:
+              content:
+                type: string
+                description: Message content
+                required: true
+              parent:
+                type: integer
+                description: Parent message
+                required: false
+
+      responses:
+        201:
+          description: Successfully created message
+
+  /login:
+    post:
+      tags:
+        - Authentication
+      summary: Log in
+
+      parameters:
+        - name: user
+          in: body
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+                description: Username
+                required: true
+              password:
+                type: string
+                description: Password
+                required: true
+
+      responses:
+        200:
+          description: Successfully logged in
+
+  /logout:
+    get:
+      tags:
+        - Authentication
+      summary: Log out
+
+      responses:
+        200:
+          description: Successfully logged out

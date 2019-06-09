@@ -1,0 +1,12 @@
+[database]
+
+DB_HOST = 'localhost'
+DB_PORT = 5432
+
+DB_NAME = 'shhforum'
+DB_USER = 'shhforum_user'
+DB_PASS = 'shhforum_pass'
+
+[sentry]
+
+SENTRY_KEY = 'https://0a75888a044f41bebb31d32ff4f66bd0@sentry.io/1472775'
