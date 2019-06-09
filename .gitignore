@@ -1,0 +1,6 @@
+.env
+.idea
+.pytest_cache
+*.iml
+*.pyc
+*.pyo
