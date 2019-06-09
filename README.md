@@ -34,6 +34,11 @@ Run server::
 
     $ python main.py -c config/user_config.toml
 
+Swagger API::
+
+    http://localhost:8080/api/doc
+
+
 Testing
 =======
 
