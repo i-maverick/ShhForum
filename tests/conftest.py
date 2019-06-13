@@ -1,6 +1,6 @@
 import pytest
 
-from main import init_app
+from forum.main import init_app
 from forum.settings import load_config, BASE_DIR
 from db_helpers import (
     setup_db, teardown_db,

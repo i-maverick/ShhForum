@@ -32,7 +32,7 @@ Check db for created data::
 
 Run server::
 
-    $ python main.py -c config/user_config.toml
+    $ python -m forum
 
 Swagger API::
 
