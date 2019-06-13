@@ -18,6 +18,14 @@ async def index(request):
     return web.Response(text='ShhForum')
 
 
+def json_encoder(data):
+    def encoder(o):
+        if isinstance(o, datetime):
+            return o.__str__()
+
+    return json.dumps(data, default=encoder)
+
+
 class BaseView(web.View):
     REQUIRED = ()
 
@@ -55,20 +63,6 @@ class BaseView(web.View):
         """Simple Ok response"""
         return json_response({'result': 'ok'}, status=status)
 
-    @staticmethod
-    def prepare_response(data):
-        """Strange wrapper to serialize datetime object"""
-        response = []
-        for obj in data:
-            result_obj = {}
-            for key, value in dict(obj).items():
-                if isinstance(value, datetime):
-                    result_obj[key] = str(value)
-                else:
-                    result_obj[key] = value
-            response.append(result_obj)
-        return response
-
 
 class TopicView(BaseView):
     REQUIRED = ('name',)
@@ -80,9 +74,9 @@ class TopicView(BaseView):
         topic_id = self.request.match_info.get('id')
         async with self.request.app['db_pool'].acquire() as conn:
             if not topic_id:
-                data = await db.get_topics(conn)
-                response = self.prepare_response(data)
-                return json_response(response)
+                result = await db.get_topics(conn)
+                data = list(map(dict, result))
+                return json_response(data, dumps=json_encoder)
 
             topic_id = self.get_object_id()
             data = await db.get_topic_by_id(conn, topic_id)
@@ -152,12 +146,12 @@ class ThreadView(BaseView):
         """
         topic_id = self.get_object_id()
         async with self.request.app['db_pool'].acquire() as conn:
-            data = await db.get_threads_by_topic_id(conn, topic_id)
-            if not data:
+            result = await db.get_threads_by_topic_id(conn, topic_id)
+            if not result:
                 raise web.HTTPNotFound()
 
-            response = self.prepare_response(data)
-            return json_response(response)
+            data = list(map(dict, result))
+            return json_response(data, dumps=json_encoder)
 
     # Here should be aiolibs.atomic decorator to make a consistent transaction
     # but unfortunately @asvetlov hasn't implemented it for CBV yet
@@ -199,12 +193,12 @@ class MessageView(BaseView):
         """
         thread_id = self.get_object_id()
         async with self.request.app['db_pool'].acquire() as conn:
-            data = await db.get_messages_by_thread_id(conn, thread_id)
-            if not data:
+            result = await db.get_messages_by_thread_id(conn, thread_id)
+            if not result:
                 raise web.HTTPNotFound()
 
-            response = self.prepare_response(data)
-            return json_response(response)
+            data = list(map(dict, result))
+            return json_response(data, dumps=json_encoder)
 
     async def post(self):
         """Add new message to thread
