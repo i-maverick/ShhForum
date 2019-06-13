@@ -153,8 +153,6 @@ class ThreadView(BaseView):
             data = list(map(dict, result))
             return json_response(data, dumps=json_encoder)
 
-    # Here should be aiolibs.atomic decorator to make a consistent transaction
-    # but unfortunately @asvetlov hasn't implemented it for CBV yet
     async def post(self):
         """Create a new thread in topic
         POST /topics/{id:int}/threads
@@ -167,17 +165,18 @@ class ThreadView(BaseView):
         data = await self.get_body_params()
         async with self.request.app['db_pool'].acquire() as conn:
             try:
-                thread = await db.create_thread(
-                    conn,
-                    data['title'],
-                    topic_id
-                )
-                await db.create_message(
-                    conn,
-                    data['content'],
-                    thread['id'],
-                    starter=True
-                )
+                async with conn.transaction():
+                    thread = await db.create_thread(
+                        conn,
+                        data['title'],
+                        topic_id
+                    )
+                    await db.create_message(
+                        conn,
+                        data['content'],
+                        thread['id'],
+                        starter=True
+                    )
             except asyncpg.exceptions.PostgresError as exc:
                 log.error(exc)
                 return web.HTTPBadRequest()
